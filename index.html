@@ -1441,5 +1441,32 @@ height="0" width="0" style="display:none;visibility:hidden" title="gtm"></iframe
   document.querySelectorAll('.fade-in').forEach(el => io.observe(el));
 })();
 </script>
+
+<!-- ==========================================================
+     CTA click events (Meta Pixel + GTM dataLayer)
+========================================================== -->
+<script>
+(function(){
+  function utmContent(a){
+    try { return new URL(a.href).searchParams.get('utm_content') || ''; }
+    catch (e) { return ''; }
+  }
+  document.addEventListener('click', function(e){
+    const target = e.target instanceof Element ? e.target : null;
+    if (!target) return;
+    const hacomono = target.closest('a.btn-primary');
+    const line = hacomono ? null : target.closest('a.btn-line');
+    const a = hacomono || line;
+    if (!a) return;
+    if (typeof fbq === 'function') fbq('track', hacomono ? 'Lead' : 'Contact');
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: 'cta_click',
+      cta_type: hacomono ? 'hacomono' : 'line',
+      cta_place: utmContent(a)
+    });
+  });
+})();
+</script>
 </body>
 </html>
